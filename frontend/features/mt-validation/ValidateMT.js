@@ -79,11 +79,11 @@ BENEFICIARY ADDRESS 2
           if (text.trim() === "MT Valide !") {
             errors = []
           } else {
-          try {
-            const jsonData = JSON.parse(text)
-            errors = Array.isArray(jsonData) ? jsonData : [jsonData]
-          } catch {
-            errors = [text]
+            try {
+              const jsonData = JSON.parse(text)
+              errors = Array.isArray(jsonData) ? jsonData : [jsonData]
+            } catch {
+              errors = [text]
             }
           }
         }
@@ -244,15 +244,15 @@ BENEFICIARY ADDRESS 2
                     </Button>
                   )}
                 </div>
-                  <ScrollArea className="h-[200px] w-full rounded-md border p-4">
-                    <div className="space-y-2">
-                      {validationResult.errors.map((error, index) => (
-                        <div key={index} className="text-sm text-red-600 border-l-2 border-red-200 pl-3 py-1">
-                          {error}
-                        </div>
-                      ))}
-                    </div>
-                  </ScrollArea>
+                <ScrollArea className="h-[200px] w-full rounded-md border p-4">
+                  <div className="space-y-2">
+                    {validationResult.errors.map((error, index) => (
+                      <div key={index} className="text-sm text-red-600 border-l-2 border-red-200 pl-3 py-1">
+                        {error}
+                      </div>
+                    ))}
+                  </div>
+                </ScrollArea>
               </div>
             )}
           </CardContent>

@@ -25,7 +25,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Maximize2 } from "lucide-react"
 
 // Import du nouveau composant Validation XSD
-import ValidateXSD from "@/components/ValidateXSD"
+import ValidateXSD from "../xsd-validation/ValidateXSD"
 
 export default function ConvertMT({ backendStatus, onRefreshHistory, onAddToHistory, initialMessage }) {
   const [message, setMessage] = useState("")
@@ -359,15 +359,15 @@ BENEFICIARY ADDRESS 2
             <CardDescription>Lancez la conversion de votre message validé en format MX.</CardDescription>
           </CardHeader>
           <CardContent className="flex justify-center">
-        <Button
-          onClick={handleTransform}
-          disabled={!message.trim() || loading || backendStatus === "offline"}
-          size="lg"
+            <Button
+              onClick={handleTransform}
+              disabled={!message.trim() || loading || backendStatus === "offline"}
+              size="lg"
               className="w-full"
-        >
-          {loading ? <RefreshCw className="h-4 w-4 mr-2 animate-spin" /> : <Zap className="h-4 w-4 mr-2" />}
-          {loading ? "Conversion en cours..." : "Convertir en MX"}
-        </Button>
+            >
+              {loading ? <RefreshCw className="h-4 w-4 mr-2 animate-spin" /> : <Zap className="h-4 w-4 mr-2" />}
+              {loading ? "Conversion en cours..." : "Convertir en MX"}
+            </Button>
           </CardContent>
         </Card>
 
@@ -429,7 +429,7 @@ BENEFICIARY ADDRESS 2
             {transformationResult.transformationErrors?.length > 0 && (
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
-                <h4 className="font-medium text-destructive">Erreurs de transformation :</h4>
+                  <h4 className="font-medium text-destructive">Erreurs de transformation :</h4>
                   {/* Bouton Agrandir pour les erreurs de transformation */}
                   <Button variant="outline" size="icon" onClick={() => handleEnlargeClick(transformationResult.transformationErrors.map(err => typeof err === 'object' ? (err.message || err.errorMessage || JSON.stringify(err)) : err).join('\n'), 'Erreurs de transformation')}>
                     <Maximize2 className="h-4 w-4" />
@@ -452,7 +452,7 @@ BENEFICIARY ADDRESS 2
             {transformationResult.objetTronquees?.length > 0 && (
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
-                <h4 className="font-medium text-yellow-700">Champs tronqués :</h4>
+                  <h4 className="font-medium text-yellow-700">Champs tronqués :</h4>
                   {/* Bouton Agrandir pour les champs tronqués */}
                   <Button variant="outline" size="icon" onClick={() => handleEnlargeClick(transformationResult.objetTronquees.map(field => `Champ: ${field.fieldName}, Valeur: ${field.originalValue}`).join('\n'), 'Champs tronqués')}>
                     <Maximize2 className="h-4 w-4" />
@@ -483,8 +483,8 @@ BENEFICIARY ADDRESS 2
           <div className="flex-grow overflow-hidden">
             <ScrollArea className="h-full w-full pr-4">
               <pre className="text-sm font-mono whitespace-pre-wrap break-all">{enlargedContent}</pre>
-                  </ScrollArea>
-              </div>
+            </ScrollArea>
+          </div>
         </DialogContent>
       </Dialog>
     </div>

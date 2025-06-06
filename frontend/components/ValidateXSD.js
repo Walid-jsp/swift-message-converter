@@ -84,18 +84,23 @@ export default function ValidateXSD({ mxMessage, onValidationComplete, backendSt
             const errorDetails = JSON.parse(responseText)
             console.log("Parsed 400 error details:", errorDetails);
             // Check if the response is an array and contains objects with a 'message' property
-            if (Array.isArray(errorDetails) && errorDetails.every(err => typeof err === 'object' && err !== null && err.message)) {
+            if (Array.isArray(errorDetails)) {
               // Successfully parsed expected JSON format, extract messages
-              errorsToDisplay = errorDetails.map(err => err.message);
+              errorsToDisplay = errorDetails.map(err => 
+                typeof err === 'object' && err !== null 
+                  ? err.message || JSON.stringify(err)
+                  : String(err)
+              );
+            } else if (typeof errorDetails === 'object' && errorDetails !== null) {
+              // Si c'est un objet unique avec un message
+              errorsToDisplay = [errorDetails.message || JSON.stringify(errorDetails)];
             } else {
-              // If 400 but JSON format is unexpected (not array of objects with message)
-              console.error("Unexpected 400 error response format:", errorDetails);
-              errorsToDisplay = [`Erreur de validation XSD: Le format des détails d'erreur renvoyés par le serveur est inattendu.`];
+              // Si le format est inattendu
+              errorsToDisplay = [String(errorDetails)];
             }
           } catch (jsonError) {
-            // If JSON parsing fails for 400 responseText
-            console.error("Failed to parse 400 error response JSON:", jsonError);
-            errorsToDisplay = [`Erreur de validation XSD: Impossible de traiter les détails de l'erreur renvoyés par le serveur.`];
+            // Si le parsing JSON échoue, utiliser le texte brut
+            errorsToDisplay = [responseText];
           }
         } else {
            // For other non-400 HTTP errors
@@ -113,7 +118,7 @@ export default function ValidateXSD({ mxMessage, onValidationComplete, backendSt
 
         toast({
           title: "Erreur de validation XSD",
-          description: errorsToDisplay.join("\n"),
+          description: "Des erreurs XSD ont été détectées. Veuillez consulter la liste des erreurs ci-dessous.",
           variant: "destructive",
         })
       }
@@ -174,7 +179,7 @@ export default function ValidateXSD({ mxMessage, onValidationComplete, backendSt
                <div className="space-y-2">
                  {xsdValidationResult.errors.map((error, index) => (
                    <div key={index} className="text-sm text-red-600 border-l-2 border-red-200 pl-3 py-1">
-                     {error}
+                     {"-" + error}
                    </div>
                  ))}
                </div>

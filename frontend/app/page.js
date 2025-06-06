@@ -39,6 +39,7 @@ export default function Home() {
     failedConversions: 0,
     validationErrors: 0,
   })
+  const [mtMessageForConversion, setMtMessageForConversion] = useState("");
   const { toast } = useToast()
 
   // Vérification du backend au chargement
@@ -253,11 +254,24 @@ export default function Home() {
         return <Dashboard stats={stats} backendStatus={backendStatus} onCheckHealth={checkBackendHealth} />
       case "validate":
         return (
-          <ValidateMT backendStatus={backendStatus} onAddToHistory={addToHistory} onRefreshHistory={refreshHistory} />
+          <ValidateMT
+            backendStatus={backendStatus}
+            onAddToHistory={addToHistory}
+            onRefreshHistory={refreshHistory}
+            onValidationSuccess={(message) => {
+              setMtMessageForConversion(message);
+              setActiveView("convert");
+            }}
+          />
         )
       case "convert":
         return (
-          <ConvertMT backendStatus={backendStatus} onAddToHistory={addToHistory} onRefreshHistory={refreshHistory} />
+          <ConvertMT
+            backendStatus={backendStatus}
+            onAddToHistory={addToHistory}
+            onRefreshHistory={refreshHistory}
+            initialMessage={mtMessageForConversion}
+          />
         )
       case "history":
         return (
@@ -290,9 +304,9 @@ export default function Home() {
                 <h2 className="text-lg font-semibold"></h2>
               </div>
             </div> */}
-            <div className="flex items-center">
+            {/* <div className="flex items-center">
                 <img src="/logo-attijariwafa-bank.png" alt="" />
-            </div>
+            </div> */}
           </SidebarHeader>
 
           <SidebarContent className="bg-[#FFD699]">
@@ -339,7 +353,7 @@ export default function Home() {
               </SidebarGroupContent>
             </SidebarGroup>
 
-            <SidebarGroup>
+            {/* <SidebarGroup>
               <SidebarGroupLabel>Statut Backend</SidebarGroupLabel>
               <SidebarGroupContent>
                 <div className="px-3 py-2">
@@ -363,7 +377,7 @@ export default function Home() {
                   </div>
                 </div>
               </SidebarGroupContent>
-            </SidebarGroup>
+            </SidebarGroup> */}
 
             <SidebarGroup>
               <SidebarGroupLabel>Statistiques</SidebarGroupLabel>
@@ -388,9 +402,9 @@ export default function Home() {
 
             <SidebarFooter className="border-t p-4 bg-[#FFD699]">
             <div className="text-xs text-muted-foreground">
-              <p className="font-medium">SWIFT Converter v2.0</p>
-              <p>Conversion MT103 → MX</p>
-              <p className="mt-1">© 2024</p>
+              <p className="font-medium">walid choukri lmerrakchi</p>
+              {/* <p>Conversion MT103 → MX</p> */}
+              <p className="mt-1">© 2025</p>
             </div>
           </SidebarFooter>
         </Sidebar>
