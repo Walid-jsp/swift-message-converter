@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { CheckCircle2, AlertCircle, TrendingUp, FileText, Zap, RefreshCw, Clock, BarChart3 } from "lucide-react"
+import { CheckCircle2, AlertCircle, TrendingUp, FileText, Zap, RefreshCw, Clock, BarChart3, Camera } from "lucide-react"
 
 export default function Dashboard({ stats, backendStatus, onCheckHealth }) {
   const successRate = stats.totalConversions > 0 ? (stats.successfulConversions / stats.totalConversions) * 100 : 0
@@ -92,7 +92,7 @@ export default function Dashboard({ stats, backendStatus, onCheckHealth }) {
             <div className="space-y-2">
               <div className="flex items-center gap-2">
                 <Badge variant="outline">1</Badge>
-                <h4 className="font-medium">Validate MT</h4>
+                <h4 className="font-medium">Valider MT</h4>
               </div>
               <p className="text-sm text-muted-foreground">
                 Commencez par valider votre message MT103 pour détecter les erreurs de format.
@@ -101,7 +101,7 @@ export default function Dashboard({ stats, backendStatus, onCheckHealth }) {
             <div className="space-y-2">
               <div className="flex items-center gap-2">
                 <Badge variant="outline">2</Badge>
-                <h4 className="font-medium">Convert</h4>
+                <h4 className="font-medium">Convertir</h4>
               </div>
               <p className="text-sm text-muted-foreground">
                 Transformez votre message validé en format MX (ISO 20022) compatible.
@@ -110,7 +110,7 @@ export default function Dashboard({ stats, backendStatus, onCheckHealth }) {
             <div className="space-y-2">
               <div className="flex items-center gap-2">
                 <Badge variant="outline">3</Badge>
-                <h4 className="font-medium">Validate XSD</h4>
+                <h4 className="font-medium">Valider contre le XSD</h4>
               </div>
               <p className="text-sm text-muted-foreground">
                 Validez le message converti contre le schéma XSD pour garantir la conformité.

@@ -292,58 +292,70 @@ export default function Home() {
 
   return (
     <SidebarProvider>
-      <div className="flex h-screen w-full">
+      <div className="flex h-screen w-full ">
         {/* Sidebar */}
-          <Sidebar className="border-r bg-[#FFD699]">
-          <SidebarHeader className="border-b p-4 bg-[#FFE0B2]">
-            {/* <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                <Zap className="h-4 w-4" />
-              </div>
-              <div>
-                <h2 className="text-lg font-semibold"></h2>
-              </div>
-            </div> */}
+       <Sidebar className="border-r bg-gradient-to-r from-[#FF914D] to-[#FFC045]">
+          <SidebarHeader className="border-b p-4 bg-gradient-to-r from-[#FF914D] to-[#FFC045]">
             {/* <div className="flex items-center">
                 <img src="/logo-attijariwafa-bank.png" alt="" />
             </div> */}
           </SidebarHeader>
 
-          <SidebarContent className="bg-[#FFD699]">
+          <SidebarContent className="bg-gradient-to-r from-[#FF914D] to-[#FFC045]">
             <SidebarGroup>
-              <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+              <SidebarGroupLabel className="text-black-800 font-medium">Navigation</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
                   <SidebarMenuItem>
-                    <SidebarMenuButton onClick={() => setActiveView("dashboard")} isActive={activeView === "dashboard"}>
+                    <SidebarMenuButton 
+                      onClick={() => setActiveView("dashboard")} 
+                      isActive={activeView === "dashboard"}
+                      className="hover:bg-orange-200/50 data-[state=open]:bg-orange-200/70 text-black-900"
+                    >
                       <BarChart3 className="h-4 w-4" />
                       <span>Dashboard</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <SidebarMenuButton onClick={() => setActiveView("validate")} isActive={activeView === "validate"}>
+                    <SidebarMenuButton 
+                      onClick={() => setActiveView("validate")} 
+                      isActive={activeView === "validate"}
+                      className="hover:bg-orange-200/50 data-[state=open]:bg-orange-200/70 text-black-900"
+                    >
                       <CheckCircle2 className="h-4 w-4" />
                       <span>Valider MT</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <SidebarMenuButton onClick={() => setActiveView("convert")} isActive={activeView === "convert"}>
+                    <SidebarMenuButton 
+                      onClick={() => setActiveView("convert")} 
+                      isActive={activeView === "convert"}
+                      className="hover:bg-orange-200/50 data-[state=open]:bg-orange-200/70 text-black-900"
+                    >
                       <MessageSquare className="h-4 w-4" />
                       <span>Convertir</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <SidebarMenuButton onClick={() => setActiveView("validate-xsd")} isActive={activeView === "validate-xsd"}>
+                    <SidebarMenuButton 
+                      onClick={() => setActiveView("validate-xsd")} 
+                      isActive={activeView === "validate-xsd"}
+                      className="hover:bg-orange-200/50 data-[state=open]:bg-orange-200/70 text-black-900"
+                    >
                       <Shield className="h-4 w-4" />
                       <span>Valider contre le XSD</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <SidebarMenuButton onClick={() => setActiveView("history")} isActive={activeView === "history"}>
+                    <SidebarMenuButton 
+                      onClick={() => setActiveView("history")} 
+                      isActive={activeView === "history"}
+                      className="hover:bg-orange-200/50 data-[state=open]:bg-orange-200/70 text-black-900"
+                    >
                       <History className="h-4 w-4" />
                       <span>Historique</span>
                       {history.length > 0 && (
-                        <Badge variant="secondary" className="ml-auto">
+                        <Badge variant="secondary" className="ml-auto bg-orange-300 text-black-900">
                           {history.length}
                         </Badge>
                       )}
@@ -353,57 +365,31 @@ export default function Home() {
               </SidebarGroupContent>
             </SidebarGroup>
 
-            {/* <SidebarGroup>
-              <SidebarGroupLabel>Statut Backend</SidebarGroupLabel>
-              <SidebarGroupContent>
-                <div className="px-3 py-2">
-                  <div className="flex items-center gap-2">
-                    {backendStatus === "online" ? (
-                      <>
-                        <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
-                        <span className="text-sm text-green-700">Connecté</span>
-                      </>
-                    ) : backendStatus === "offline" ? (
-                      <>
-                        <div className="h-2 w-2 rounded-full bg-red-500" />
-                        <span className="text-sm text-red-700">Déconnecté</span>
-                      </>
-                    ) : (
-                      <>
-                        <div className="h-2 w-2 rounded-full bg-yellow-500 animate-pulse" />
-                        <span className="text-sm text-yellow-700">Vérification...</span>
-                      </>
-                    )}
-                  </div>
-                </div>
-              </SidebarGroupContent>
-            </SidebarGroup> */}
-
             <SidebarGroup>
-              <SidebarGroupLabel>Statistiques</SidebarGroupLabel>
+              <SidebarGroupLabel className="text-black-800 font-medium">Statistiques</SidebarGroupLabel>
               <SidebarGroupContent>
                 <div className="px-3 py-2 space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span>Total:</span>
-                    <Badge variant="outline">{stats.totalConversions}</Badge>
+                    <span className="text-black-900">Total:</span>
+                    <Badge variant="outline" className="border-orange-400 text-black-800 bg-orange-100">{stats.totalConversions}</Badge>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span>Succès:</span>
-                    <Badge className="bg-green-100 text-green-800">{stats.successfulConversions}</Badge>
+                    <span className="text-black-900">Succès:</span>
+                    <Badge className="bg-green-200 text-green-800 hover:bg-green-200">{stats.successfulConversions}</Badge>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span>Échecs:</span>
-                    <Badge variant="destructive">{stats.failedConversions}</Badge>
+                    <span className="text-black-900">Échecs:</span>
+                    <Badge className="bg-red-200 text-red-800 hover:bg-red-200">{stats.failedConversions}</Badge>
                   </div>
                 </div>
               </SidebarGroupContent>
             </SidebarGroup>
           </SidebarContent>
 
-            <SidebarFooter className="border-t p-4 bg-[#FFD699]">
-            <div className="text-xs text-muted-foreground">
+         <SidebarFooter className="border-t p-4 bg-gradient-to-r from-[#FF914D] to-[#FFC045]">
+
+            <div className="text-xs text-black-800">
               <p className="font-medium">walid choukri lmerrakchi</p>
-              {/* <p>Conversion MT103 → MX</p> */}
               <p className="mt-1">© 2025</p>
             </div>
           </SidebarFooter>
@@ -412,20 +398,22 @@ export default function Home() {
         {/* Contenu principal */}
         <SidebarInset className="flex-1">
           <header
-            className="flex h-16 shrink-0 items-center gap-2 border-b px-4"
-            style={{
-              background: 'linear-gradient(90deg, #FFFDE4 0%, #FFE7C7 100%)',
-              boxShadow: '0 2px 8px 0 rgba(255, 193, 7, 0.05)'
-            }}
-          >
-            <SidebarTrigger className="-ml-1" />
-            <Separator orientation="vertical" className="mr-2 h-4" />
-            <h1 className="text-xl font-semibold">
+  className="flex h-16 shrink-0 items-center gap-2 border-b px-4"
+  style={{
+    background: 'linear-gradient(90deg, #FFC045 0%,  #FF914D 100%)',
+    boxShadow: '0 2px 8px 0 rgba(255, 193, 69, 0.15)'
+  }}
+>
+
+            <SidebarTrigger className="-ml-1 text-black-900 hover:bg-orange-200/50" />
+            <Separator orientation="vertical" className="mr-2 h-4 bg-orange-300" />
+            <h1 className="text-xl font-semibold text-black-900">
               MT2MX Converter
             </h1>
           </header>
 
-          <main className="flex-1 overflow-auto p-6">{renderContent()}</main>
+         <main className="flex-1 overflow-auto p-6 bg-gradient-to-br from-orange-100 to-yellow-100">{renderContent()}</main>
+
         </SidebarInset>
       </div>
     </SidebarProvider>

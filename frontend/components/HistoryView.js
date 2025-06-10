@@ -35,7 +35,7 @@ export default function HistoryView({ history, loading, onDeleteItem, onRetry, o
     if (statusFilter) {
       const successStatuses = ["SUCCESS", "TRANSFORMATION AVEC SUCCESS"]
       const isSuccess = successStatuses.includes(item.status)
-      
+
       if (statusFilter === "SUCCESS" && !isSuccess) return false
       if (statusFilter === "ECHEC" && isSuccess) return false
     }
@@ -164,7 +164,13 @@ export default function HistoryView({ history, loading, onDeleteItem, onRetry, o
         </div>
         <div>
           <label className="block text-sm font-medium mb-1">Date</label>
-          <input type="date" className="border rounded px-2 py-1" value={dateFilter} onChange={e => setDateFilter(e.target.value)} />
+          <input
+            type="date"
+            className="border rounded px-2 py-1 bg-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-300"
+            value={dateFilter}
+            onChange={e => setDateFilter(e.target.value)}
+          />
+
         </div>
         <div>
           <label className="block text-sm font-medium mb-1">Statut</label>
@@ -244,13 +250,17 @@ export default function HistoryView({ history, loading, onDeleteItem, onRetry, o
               <CardContent>
                 <Tabs defaultValue="input" className="w-full">
                   <TabsList>
-                    {/* Afficher l'onglet Message d'entrée seulement si ce n'est pas une validation XSD */}
-                    {item.operationType !== "VALIDATION_XSD" && (
+                    {/* Afficher l'onglet Message MX si c'est une validation XSD, sinon message d'entrée habituel */}
+                    {item.operationType === "VALIDATION_XSD" ? (
+                      <TabsTrigger value="input">Message MX</TabsTrigger>
+                    ) : (
                       <TabsTrigger value="input">
                         {item.operationType === "VALIDATION_MT" ? "Message MT103" : "Message d'entrée"}
                       </TabsTrigger>
                     )}
-                    {item.payLoadOut && <TabsTrigger value="output">Message MX</TabsTrigger>}
+                    {item.operationType !== "VALIDATION_XSD" && item.payLoadOut && (
+                      <TabsTrigger value="output">Message MX</TabsTrigger>
+                    )}
                     {/* Affichage des erreurs selon leur type */}
                     {item.transformationErrors?.length > 0 && (
                       <TabsTrigger value="errors">Erreurs ({item.transformationErrors.length})</TabsTrigger>
@@ -263,33 +273,59 @@ export default function HistoryView({ history, loading, onDeleteItem, onRetry, o
                     )}
                   </TabsList>
                   <>
-                    {/* Message d'entrée sans champ état - Conditionné pour ne pas apparaître en validation XSD */}
-                    {item.operationType !== "VALIDATION_XSD" && (
-                  <TabsContent value="input">
-                    <div className="space-y-2">
-                      <div className="flex justify-between items-center">
+                    {/* Affichage du message d'entrée ou du message MX selon le type d'opération */}
+                    {item.operationType === "VALIDATION_XSD" ? (
+                      <TabsContent value="input">
+                        <div className="space-y-2">
+                          <div className="flex justify-between items-center">
+                            <h4 className="font-medium">Message MX</h4>
+                            <div className="flex gap-2 items-center">
+                              {item.payLoadOut && (
+                                <Button variant="outline" size="sm" onClick={() => handleCopy(item.payLoadOut)}>
+                                  <Copy className="h-4 w-4 mr-2" />
+                                  Copier
+                                </Button>
+                              )}
+                              {item.payLoadOut && (
+                                <Button variant="outline" size="icon" onClick={() => handleEnlargeClick(item.payLoadOut, 'Message MX')}>
+                                  <Maximize2 className="h-4 w-4" />
+                                </Button>
+                              )}
+                            </div>
+                          </div>
+                          <ScrollArea className="h-[200px] w-full rounded-md border">
+                            <pre className="p-4 text-sm font-mono whitespace-pre-wrap">
+                              {item.payLoadOut || "Aucun message MX"}
+                            </pre>
+                          </ScrollArea>
+                        </div>
+                      </TabsContent>
+                    ) : (
+                      <TabsContent value="input">
+                        <div className="space-y-2">
+                          <div className="flex justify-between items-center">
                             <h4 className="font-medium">Message d'entrée ({item.operationType === "VALIDATION_MT" ? "MT103" : "Brut"})</h4>
                             <div className="flex gap-2 items-center">
-                        {item.payLoadIn && (
-                          <Button variant="outline" size="sm" onClick={() => handleCopy(item.payLoadIn)}>
-                            <Copy className="h-4 w-4 mr-2" />
-                            Copier
-                          </Button>
-                        )}
-                            {item.payLoadIn && ( // Bouton Agrandir pour le message d'entrée
-                              <Button variant="outline" size="icon" onClick={() => handleEnlargeClick(item.payLoadIn, 'Message d\'entrée')}>
-                                <Maximize2 className="h-4 w-4" />
-                              </Button>
-                            )}
+                              {item.payLoadIn && (
+                                <Button variant="outline" size="sm" onClick={() => handleCopy(item.payLoadIn)}>
+                                  <Copy className="h-4 w-4 mr-2" />
+                                  Copier
+                                </Button>
+                              )}
+                              {item.payLoadIn && ( // Bouton Agrandir pour le message d'entrée
+                                <Button variant="outline" size="icon" onClick={() => handleEnlargeClick(item.payLoadIn, 'Message d\'entrée')}>
+                                  <Maximize2 className="h-4 w-4" />
+                                </Button>
+                              )}
                             </div>
-                      </div>
-                      <ScrollArea className="h-[200px] w-full rounded-md border">
-                        <pre className="p-4 text-sm font-mono whitespace-pre-wrap">
-                          {item.payLoadIn || "Aucun message d'entrée"}
-                        </pre>
-                      </ScrollArea>
-                    </div>
-                  </TabsContent>
+                          </div>
+                          <ScrollArea className="h-[200px] w-full rounded-md border">
+                            <pre className="p-4 text-sm font-mono whitespace-pre-wrap">
+                              {item.payLoadIn || "Aucun message d'entrée"}
+                            </pre>
+                          </ScrollArea>
+                        </div>
+                      </TabsContent>
                     )}
                     {/* Erreurs de validation XSD */}
                     {item.validationXsdErrors?.length > 0 && ( // S'assurer que l'onglet XSD ne s'affiche que s'il y a des erreurs XSD
@@ -313,68 +349,68 @@ export default function HistoryView({ history, loading, onDeleteItem, onRetry, o
                         </ScrollArea>
                       </TabsContent>
                     )}
-                  {item.payLoadOut && (
-                    <TabsContent value="output">
-                      <div className="space-y-2">
-                        <div className="flex justify-between items-center">
-                          <h4 className="font-medium">Message de sortie (MX)</h4>
-                          <div className="flex gap-2">
-                            <Button variant="outline" size="sm" onClick={() => handleCopy(item.payLoadOut)}>
-                              <Copy className="h-4 w-4 mr-2" />
-                              Copier
-                            </Button>
-                            <Button
+                    {item.payLoadOut && (
+                      <TabsContent value="output">
+                        <div className="space-y-2">
+                          <div className="flex justify-between items-center">
+                            <h4 className="font-medium">Message de sortie (MX)</h4>
+                            <div className="flex gap-2">
+                              <Button variant="outline" size="sm" onClick={() => handleCopy(item.payLoadOut)}>
+                                <Copy className="h-4 w-4 mr-2" />
+                                Copier
+                              </Button>
+                              <Button
                                 variant="outline" size="sm" onClick={() => downloadResult(item.payLoadOut, `message-mx-${item.id}.xml`)}>
-                              <Download className="h-4 w-4 mr-2" />
-                              Télécharger
-                            </Button>
+                                <Download className="h-4 w-4 mr-2" />
+                                Télécharger
+                              </Button>
                               {item.payLoadOut && ( // Bouton Agrandir pour le message de sortie
                                 <Button variant="outline" size="icon" onClick={() => handleEnlargeClick(item.payLoadOut, 'Message de sortie')}>
                                   <Maximize2 className="h-4 w-4" />
                                 </Button>
                               )}
+                            </div>
                           </div>
+                          <ScrollArea className="h-[200px] w-full rounded-md border">
+                            <pre className="p-4 text-sm font-mono whitespace-pre-wrap">{item.payLoadOut}</pre>
+                          </ScrollArea>
                         </div>
-                        <ScrollArea className="h-[200px] w-full rounded-md border">
-                          <pre className="p-4 text-sm font-mono whitespace-pre-wrap">{item.payLoadOut}</pre>
-                        </ScrollArea>
-                      </div>
-                    </TabsContent>
-                  )}
+                      </TabsContent>
+                    )}
                     {item.transformationErrors?.length > 0 && ( // S'assurer que l'onglet Erreurs s'affiche que s'il y a des erreurs de transformation
-                    <TabsContent value="errors">
-                      <ScrollArea className="h-[200px] w-full rounded-md border p-4">
-                        <div className="space-y-3">
-                          {item.transformationErrors.map((error, index) => (
-                            <div key={index} className="border-l-2 border-red-200 pl-3">
+                      <TabsContent value="errors">
+                        <ScrollArea className="h-[200px] w-full rounded-md border p-4">
+                          <div className="space-y-3">
+                            {item.transformationErrors.map((error, index) => (
+                              <div key={index} className="border-l-2 border-red-200 pl-3">
                                 {/* Afficher le type et le message de l'erreur */}
-                              <p className="font-medium text-red-700">{error.errorType || "ERROR"}</p>
+                                <p className="font-medium text-red-700">{error.errorType || "ERROR"}</p>
                                 <p className="text-red-600 text-sm">{error.errorMessage || error.message || JSON.stringify(error)}</p>
-                              {error.errorDate && (
-                                <p className="text-xs text-gray-500">
-                                  {new Date(error.errorDate).toLocaleString("fr-FR")}
-                                </p>
-                              )}
-                            </div>
-                          ))}
-                        </div>
-                      </ScrollArea>
-                    </TabsContent>
-                  )}
-                  {item.objetTronquees?.length > 0 && (
-                    <TabsContent value="truncated">
-                      <ScrollArea className="h-[200px] w-full rounded-md border p-4">
-                        <div className="space-y-3">
-                          {item.objetTronquees.map((field, index) => (
-                            <div key={index} className="border-l-2 border-yellow-200 pl-3">
-                              <p className="font-medium text-yellow-700">{field.fieldName}</p>
-                              <p className="text-yellow-600 text-sm">Valeur originale : {field.originalValue}</p>
-                            </div>
-                          ))}
-                        </div>
-                      </ScrollArea>
-                    </TabsContent>
-                  )}
+                                {error.errorDate && (
+                                  <p className="text-xs text-gray-500">
+                                    {new Date(error.errorDate).toLocaleString("fr-FR")}
+                                  </p>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        </ScrollArea>
+                      </TabsContent>
+                    )}
+                    {item.objetTronquees?.length > 0 && (
+                      <TabsContent value="truncated">
+                        <ScrollArea className="h-[200px] w-full rounded-md border p-4">
+                          <div className="space-y-3">
+                            {item.objetTronquees.map((field, index) => (
+                              <div key={index} className="border-l-2 border-yellow-200 pl-3">
+                                <p className="font-medium text-yellow-700">{field.fieldName}</p>
+                                <p className="text-yellow-600 text-sm">Valeur originale : {field.originalValue}</p>
+                              </div>
+                            ))}
+                          </div>
+                        </ScrollArea>
+                      </TabsContent>
+                    )}
                   </>
                 </Tabs>
               </CardContent>

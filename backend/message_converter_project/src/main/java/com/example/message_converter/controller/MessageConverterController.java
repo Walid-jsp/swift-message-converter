@@ -72,14 +72,14 @@ public class MessageConverterController {
 
     @PostMapping("/transform-mt-to-mx")
     public ResponseEntity<?> transformMTtoMX(@RequestBody String mtMessage) {
-        PayLoadInOut payLoadIn = persistanceService.findByPayLoadIn(mtMessage);
-        if (payLoadIn == null) {
-            payLoadIn = new PayLoadInOut();
+
+
+           PayLoadInOut payLoadIn = new PayLoadInOut();
             payLoadIn.setPayLoadIn(mtMessage);
             payLoadIn.setTransformationDate(LocalDateTime.now());
             payLoadIn.setStatus("IN_PROGRESS");
             payLoadIn = persistanceService.savePayLoadInOut(payLoadIn);
-        }
+
 
         String mxXml;
         try {
