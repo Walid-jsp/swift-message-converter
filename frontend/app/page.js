@@ -294,23 +294,23 @@ export default function Home() {
     <SidebarProvider>
       <div className="flex h-screen w-full ">
         {/* Sidebar */}
-       <Sidebar className="border-r bg-gradient-to-r from-[#FF914D] to-[#FFC045]">
-          <SidebarHeader className="border-b p-4 bg-gradient-to-r from-[#FF914D] to-[#FFC045]">
-            {/* <div className="flex items-center">
-                <img src="/logo-attijariwafa-bank.png" alt="" />
-            </div> */}
-          </SidebarHeader>
+       <Sidebar className="border-r bg-gradient-to-r from-[#FFB366] to-[#FFD666]">
+          {/* <SidebarHeader className="border-b p-3 bg-gradient-to-r from-[#FFB366] to-[#FFD666]">
+            <div className="flex items-center">
+                <img src="/logo-attijariwafa-bank.png" alt=""  className="h-18 w-46"/>
+            </div>
+          </SidebarHeader> */}
 
-          <SidebarContent className="bg-gradient-to-r from-[#FF914D] to-[#FFC045]">
+          <SidebarContent className="bg-gradient-to-r from-[#FFB366] to-[#FFD666]">
             <SidebarGroup>
-              <SidebarGroupLabel className="text-black-800 font-medium">Navigation</SidebarGroupLabel>
+              <SidebarGroupLabel className="text-gray-700 font-medium">Navigation</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
                   <SidebarMenuItem>
                     <SidebarMenuButton 
                       onClick={() => setActiveView("dashboard")} 
                       isActive={activeView === "dashboard"}
-                      className="hover:bg-orange-200/50 data-[state=open]:bg-orange-200/70 text-black-900"
+                      className="hover:bg-orange-200/40 data-[state=open]:bg-orange-200/60 text-gray-800"
                     >
                       <BarChart3 className="h-4 w-4" />
                       <span>Dashboard</span>
@@ -320,7 +320,7 @@ export default function Home() {
                     <SidebarMenuButton 
                       onClick={() => setActiveView("validate")} 
                       isActive={activeView === "validate"}
-                      className="hover:bg-orange-200/50 data-[state=open]:bg-orange-200/70 text-black-900"
+                      className="hover:bg-orange-200/40 data-[state=open]:bg-orange-200/60 text-gray-800"
                     >
                       <CheckCircle2 className="h-4 w-4" />
                       <span>Valider MT</span>
@@ -330,9 +330,9 @@ export default function Home() {
                     <SidebarMenuButton 
                       onClick={() => setActiveView("convert")} 
                       isActive={activeView === "convert"}
-                      className="hover:bg-orange-200/50 data-[state=open]:bg-orange-200/70 text-black-900"
+                      className="hover:bg-orange-200/40 data-[state=open]:bg-orange-200/60 text-gray-800"
                     >
-                      <MessageSquare className="h-4 w-4" />
+                      <MessageSquare className="h-5 w-5" />
                       <span>Convertir</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -340,7 +340,7 @@ export default function Home() {
                     <SidebarMenuButton 
                       onClick={() => setActiveView("validate-xsd")} 
                       isActive={activeView === "validate-xsd"}
-                      className="hover:bg-orange-200/50 data-[state=open]:bg-orange-200/70 text-black-900"
+                      className="hover:bg-orange-200/40 data-[state=open]:bg-orange-200/60 text-gray-800"
                     >
                       <Shield className="h-4 w-4" />
                       <span>Valider contre le XSD</span>
@@ -350,12 +350,12 @@ export default function Home() {
                     <SidebarMenuButton 
                       onClick={() => setActiveView("history")} 
                       isActive={activeView === "history"}
-                      className="hover:bg-orange-200/50 data-[state=open]:bg-orange-200/70 text-black-900"
+                      className="hover:bg-orange-200/40 data-[state=open]:bg-orange-200/60 text-gray-800"
                     >
                       <History className="h-4 w-4" />
-                      <span>Historique</span>
+                      <span> Historique</span>
                       {history.length > 0 && (
-                        <Badge variant="secondary" className="ml-auto bg-orange-300 text-black-900">
+                        <Badge variant="secondary" className="ml-auto bg-orange-200 text-gray-700">
                           {history.length}
                         </Badge>
                       )}
@@ -366,29 +366,29 @@ export default function Home() {
             </SidebarGroup>
 
             <SidebarGroup>
-              <SidebarGroupLabel className="text-black-800 font-medium">Statistiques</SidebarGroupLabel>
+              <SidebarGroupLabel className="text-gray-700 font-medium">Statistiques</SidebarGroupLabel>
               <SidebarGroupContent>
                 <div className="px-3 py-2 space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span className="text-black-900">Total:</span>
-                    <Badge variant="outline" className="border-orange-400 text-black-800 bg-orange-100">{stats.totalConversions}</Badge>
+                    <span className="text-gray-800">Total:</span>
+                    <Badge variant="outline" className="border-orange-300 text-gray-700 bg-orange-50">{stats.totalConversions}</Badge>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-black-900">Succès:</span>
-                    <Badge className="bg-green-200 text-green-800 hover:bg-green-200">{stats.successfulConversions}</Badge>
+                    <span className="text-gray-800">Succès:</span>
+                    <Badge className="bg-green-100 text-green-700 hover:bg-green-100">{stats.successfulConversions}</Badge>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-black-900">Échecs:</span>
-                    <Badge className="bg-red-200 text-red-800 hover:bg-red-200">{stats.failedConversions}</Badge>
+                    <span className="text-gray-800">Échecs:</span>
+                    <Badge className="bg-red-100 text-red-700 hover:bg-red-100">{stats.failedConversions}</Badge>
                   </div>
                 </div>
               </SidebarGroupContent>
             </SidebarGroup>
           </SidebarContent>
 
-         <SidebarFooter className="border-t p-4 bg-gradient-to-r from-[#FF914D] to-[#FFC045]">
+         <SidebarFooter className="border-t p-4 bg-gradient-to-r from-[#FFB366] to-[#FFD666]">
 
-            <div className="text-xs text-black-800">
+            <div className="text-xs text-gray-700">
               <p className="font-medium">walid choukri lmerrakchi</p>
               <p className="mt-1">© 2025</p>
             </div>
@@ -400,19 +400,19 @@ export default function Home() {
           <header
   className="flex h-16 shrink-0 items-center gap-2 border-b px-4"
   style={{
-    background: 'linear-gradient(90deg, #FFC045 0%,  #FF914D 100%)',
-    boxShadow: '0 2px 8px 0 rgba(255, 193, 69, 0.15)'
+    background: 'linear-gradient(90deg, #FFD666 0%,  #FFB366 100%)',
+    boxShadow: '0 2px 8px 0 rgba(255, 214, 102, 0.15)'
   }}
 >
 
-            <SidebarTrigger className="-ml-1 text-black-900 hover:bg-orange-200/50" />
-            <Separator orientation="vertical" className="mr-2 h-4 bg-orange-300" />
-            <h1 className="text-xl font-semibold text-black-900">
+            <SidebarTrigger className="-ml-1 text-gray-800 hover:bg-orange-200/40" />
+            <Separator orientation="vertical" className="mr-2 h-4 bg-orange-200" />
+            <h1 className="text-xl font-semibold text-gray-800">
               MT2MX Converter
             </h1>
           </header>
 
-         <main className="flex-1 overflow-auto p-6 bg-gradient-to-br from-orange-100 to-yellow-100">{renderContent()}</main>
+         <main className="flex-1 overflow-auto p-6 bg-gradient-to-br from-orange-50 to-yellow-50">{renderContent()}</main>
 
         </SidebarInset>
       </div>
