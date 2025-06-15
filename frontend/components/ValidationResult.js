@@ -15,7 +15,7 @@ const ValidationResult = ({ errors, loading }) => {
           <h3 className="text-lg font-semibold mb-4">Résultat de la validation</h3>
           <div className="bg-green-50 border border-green-200 rounded-lg p-4 flex items-center">
             <div className="w-5 h-5 text-green-500 mr-3">✅</div>
-            <div className="text-green-700">Le message MT103 est valide. Aucune erreur détectée.</div>
+            <div className="text-green-700">Le message MT est valide. Aucune erreur détectée.</div>
           </div>
         </div>
       </div>
@@ -28,7 +28,7 @@ const ValidationResult = ({ errors, loading }) => {
         <h3 className="text-lg font-semibold mb-4">Résultat de la validation</h3>
         <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-center mb-4">
           <div className="w-5 h-5 text-red-500 mr-3">⚠️</div>
-          <div className="text-red-700">{errors.length} erreur(s) détectée(s) dans le message MT103.</div>
+          <div className="text-red-700">{errors.length} erreur(s) détectée(s) dans le message MT.</div>
         </div>
 
         <div>

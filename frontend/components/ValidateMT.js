@@ -51,7 +51,7 @@ BENEFICIARY ADDRESS 2
     if (!message.trim()) {
       toast({
         title: "Erreur",
-        description: "Veuillez saisir un message MT103",
+        description: "Veuillez saisir un message MT",
         variant: "destructive",
       })
       return
@@ -149,9 +149,9 @@ BENEFICIARY ADDRESS 2
     <div className="space-y-6">
       {/* En-tête */}
       <div className="space-y-2">
-        <h2 className="text-3xl font-bold tracking-tight">Validation MT103</h2>
+        <h2 className="text-3xl font-bold tracking-tight">Validation MT</h2>
         <p className="text-muted-foreground">
-          Validez votre message SWIFT MT103 selon les standards bancaires internationaux
+          Validez votre message SWIFT MT selon les standards bancaires internationaux
         </p>
       </div>
 
@@ -170,18 +170,18 @@ BENEFICIARY ADDRESS 2
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <FileText className="h-5 w-5" />
-            Message MT103
-            <Button variant="outline" size="icon" className="ml-auto" onClick={() => handleEnlargeClick(message, 'Message MT103')}>
+            Message MT
+            <Button variant="outline" size="icon" className="ml-auto" onClick={() => handleEnlargeClick(message, 'Message MT')}>
               <Maximize2 className="h-4 w-4" />
             </Button>
           </CardTitle>
-          <CardDescription>Saisissez ou collez votre message SWIFT MT103 ci-dessous pour le valider</CardDescription>
+          <CardDescription>Saisissez ou collez votre message SWIFT MT ci-dessous pour le valider</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <Textarea
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            placeholder="Saisissez votre message MT103 ici..."
+            placeholder="Saisissez votre message MT ici..."
             className="min-h-[300px] font-mono text-sm"
           />
           <div className="flex gap-2">
@@ -224,7 +224,7 @@ BENEFICIARY ADDRESS 2
               <Alert>
                 <CheckCircle2 className="h-4 w-4" />
                 <AlertDescription>
-                  ✅ Le message MT103 est valide. Aucune erreur détectée. Vous pouvez maintenant procéder à la
+                  ✅ Le message MT est valide. Aucune erreur détectée. Vous pouvez maintenant procéder à la
                   conversion.
                 </AlertDescription>
               </Alert>
@@ -233,7 +233,7 @@ BENEFICIARY ADDRESS 2
                 <Alert variant="destructive">
                   <AlertCircle className="h-4 w-4" />
                   <AlertDescription>
-                    ⚠️ {validationResult.errors.length} erreur(s) détectée(s) dans le message MT103.
+                    ⚠️ {validationResult.errors.length} erreur(s) détectée(s) dans le message MT.
                   </AlertDescription>
                 </Alert>
                 <div className="flex justify-between items-center mb-2">

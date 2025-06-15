@@ -123,28 +123,25 @@ public class Mt103ToPacs008Transformer implements TransformerService {
         }
 
 
-        // Donneur d’ordre (50K/A/F)
+        // Debtor (Donneur d’ordre, 50K/A/F)
         PartyIdentification272 dbtr = new PartyIdentification272();
         dbtr.setNm(fields.getOrderingCustomerName());
-        if (fields.getOrderingCustomerAddress() != null) {
-            PostalAddress27 addr = new PostalAddress27();
+        PostalAddress27 dbtrAddr = buildPostalAddress(
+                fields.getOrderingCustomerCity(),
+                null, // TwnLctnNm
+                null, // DstrctNm
+                null, // CtrySubDvsn
+                fields.getOrderingCustomerCountry(),
+                fields.getOrderingCustomerAddress()
+        );
+        if (dbtrAddr != null) dbtr.setPstlAdr(dbtrAddr);
 
-            if (fields.getOrderingCustomerCity() != null)
-                addr.setTwnNm(fields.getOrderingCustomerCity());
 
-            if (fields.getOrderingCustomerCountry() != null)
-                addr.setCtry(fields.getOrderingCustomerCountry());
 
-            if (fields.getOrderingCustomerAddress() != null)
-                for (String line : fields.getOrderingCustomerAddress().split("\\n"))
-                    addr.getAdrLine().add(line.trim());
-
-            dbtr.setPstlAdr(addr);
-
-        }
+        if (dbtrAddr != null) dbtr.setPstlAdr(dbtrAddr);
         cdtTrfTxInfo.setDbtr(dbtr);
 
-        // Compte donneur d'ordre
+// Debtor Account
         if (fields.getOrderingCustomerIban() != null) {
             CashAccount40 dbtrAcct = new CashAccount40();
             AccountIdentification4Choice dbtrAcctId = new AccountIdentification4Choice();
@@ -153,18 +150,33 @@ public class Mt103ToPacs008Transformer implements TransformerService {
             cdtTrfTxInfo.setDbtrAcct(dbtrAcct);
         }
 
+// Debtor Agent (DbtrAgt) – Obligatoire
+        // Debtor Agent (DbtrAgt) – Obligatoire (mappe :52A:)
+        if (fields.getOrderingInstitutionBic() != null && !fields.getOrderingInstitutionBic().isEmpty()) {
+            BranchAndFinancialInstitutionIdentification8 dbtrAgt = new BranchAndFinancialInstitutionIdentification8();
+            FinancialInstitutionIdentification23 finInstnId = new FinancialInstitutionIdentification23();
+            finInstnId.setBICFI(fields.getOrderingInstitutionBic());
+            dbtrAgt.setFinInstnId(finInstnId);
+            cdtTrfTxInfo.setDbtrAgt(dbtrAgt);
+        }
 
-        // Bénéficiaire (59)
+
+// Creditor (Bénéficiaire, 59)
         PartyIdentification272 cdtr = new PartyIdentification272();
         cdtr.setNm(fields.getBeneficiaryName());
-        if (fields.getBeneficiaryAddress() != null) {
-            PostalAddress27 addr = new PostalAddress27();
-            addr.getAdrLine().add(fields.getBeneficiaryAddress());
-            cdtr.setPstlAdr(addr);
-        }
+        PostalAddress27 cdtrAddr = buildPostalAddress(
+                fields.getBeneficiaryCity(),        // twnNm
+                null,                              // twnLctnNm
+                null,                              // dstrctNm
+                null,                              // ctrySubDvsn
+                fields.getBeneficiaryCountry(),     // ctry
+                fields.getBeneficiaryAddress()      // adrLine
+        );
+
+        if (cdtrAddr != null) cdtr.setPstlAdr(cdtrAddr);
         cdtTrfTxInfo.setCdtr(cdtr);
 
-        // Compte bénéficiaire
+// Creditor Account
         if (fields.getBeneficiaryIban() != null) {
             CashAccount40 cdtrAcct = new CashAccount40();
             AccountIdentification4Choice cdtrAcctId = new AccountIdentification4Choice();
@@ -173,14 +185,15 @@ public class Mt103ToPacs008Transformer implements TransformerService {
             cdtTrfTxInfo.setCdtrAcct(cdtrAcct);
         }
 
-        // Banque bénéficiaire (57A)
+// Creditor Agent (CdtrAgt) – Obligatoire
         if (fields.getAccountWithInstitutionBic() != null && !fields.getAccountWithInstitutionBic().isEmpty()) {
             BranchAndFinancialInstitutionIdentification8 cdtrAgt = new BranchAndFinancialInstitutionIdentification8();
-            FinancialInstitutionIdentification23 finInstn = new FinancialInstitutionIdentification23();
-            finInstn.setBICFI(fields.getAccountWithInstitutionBic());
-            cdtrAgt.setFinInstnId(finInstn);
+            FinancialInstitutionIdentification23 finInstnId = new FinancialInstitutionIdentification23();
+            finInstnId.setBICFI(fields.getAccountWithInstitutionBic());
+            cdtrAgt.setFinInstnId(finInstnId);
             cdtTrfTxInfo.setCdtrAgt(cdtrAgt);
         }
+
 
         // Détail des frais :71A: → ChrgBr
         String chrgBr = mapChargeBearer(fields.getChargeDetails());
@@ -296,5 +309,54 @@ public class Mt103ToPacs008Transformer implements TransformerService {
             throw new RuntimeException("Conversion LocalDate → XMLGregorianCalendar échouée", e);
         }
     }
+    private PostalAddress27 buildPostalAddress(
+            String twnNm,        // Ville
+            String twnLctnNm,    // Non utilisé, laisse null sauf cas spéciaux
+            String dstrctNm,     // Non utilisé, laisse null sauf cas spéciaux
+            String ctrySubDvsn,  // Non utilisé, laisse null sauf cas spéciaux
+            String ctry,         // Pays
+            String adrLine       // Adresse(s) (plusieurs lignes séparées par \n)
+    ) {
+        PostalAddress27 addr = new PostalAddress27();
+        boolean hasValue = false;
+
+        // 1. Ville
+        if (twnNm != null && !twnNm.trim().isEmpty()) {
+            addr.setTwnNm(twnNm.trim());
+            hasValue = true;
+        }
+        // 2. TwnLctnNm (facultatif, rarement utilisé)
+        if (twnLctnNm != null && !twnLctnNm.trim().isEmpty()) {
+            addr.setTwnLctnNm(twnLctnNm.trim());
+            hasValue = true;
+        }
+        // 3. DstrctNm (facultatif)
+        if (dstrctNm != null && !dstrctNm.trim().isEmpty()) {
+            addr.setDstrctNm(dstrctNm.trim());
+            hasValue = true;
+        }
+        // 4. CtrySubDvsn (facultatif)
+        if (ctrySubDvsn != null && !ctrySubDvsn.trim().isEmpty()) {
+            addr.setCtrySubDvsn(ctrySubDvsn.trim());
+            hasValue = true;
+        }
+        // 5. Pays
+        if (ctry != null && !ctry.trim().isEmpty()) {
+            addr.setCtry(ctry.trim());
+            hasValue = true;
+        }
+        // 6. Lignes d'adresse
+        if (adrLine != null && !adrLine.trim().isEmpty()) {
+            for (String line : adrLine.split("\\n")) {
+                if (!line.trim().isEmpty()) {
+                    addr.getAdrLine().add(line.trim());
+                    hasValue = true;
+                }
+            }
+        }
+        // Retourne l'adresse seulement si au moins un champ a été rempli
+        return hasValue ? addr : null;
+    }
+
 
 }

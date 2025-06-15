@@ -202,7 +202,7 @@ const HistoryList = ({ history, loading, onDelete, onRetry, onRefresh }) => {
               {modalContent === "details" && (
                 <div className="space-y-4">
                   <div>
-                    <h4 className="text-sm font-medium mb-2">Message MT103 (Entrée)</h4>
+                    <h4 className="text-sm font-medium mb-2">Message MT (Entrée)</h4>
                     <pre className="bg-gray-50 p-4 rounded-md overflow-x-auto text-sm font-mono max-h-[200px] overflow-y-auto border">
                       {selectedItem.payLoadIn}
                     </pre>

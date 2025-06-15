@@ -389,7 +389,7 @@ export default function Home() {
          <SidebarFooter className="border-t p-4 bg-gradient-to-r from-[#FFB366] to-[#FFD666]">
 
             <div className="text-xs text-gray-700">
-              <p className="font-medium">walid choukri lmerrakchi</p>
+              <p className="font-medium">blablabla</p>
               <p className="mt-1">© 2025</p>
             </div>
           </SidebarFooter>

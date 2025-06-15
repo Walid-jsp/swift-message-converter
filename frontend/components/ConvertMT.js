@@ -50,7 +50,7 @@ export default function ConvertMT({ backendStatus, onRefreshHistory, onAddToHist
     if (initialMessage) {
       setMessage(initialMessage);
     }
-  }, [initialMessage]); // Re-run effect when initialMessage changes
+  }, [initialMessage]); 
 
   const loadSampleMessage = () => {
     const sampleMT103 = `{1:F01BANKBEBBAXXX0000000000}{2:I103BANKDEFFXXXXN}{4:
@@ -78,7 +78,7 @@ BENEFICIARY ADDRESS 2
     if (!message.trim()) {
       toast({
         title: "Erreur",
-        description: "Veuillez saisir un message MT103",
+        description: "Veuillez saisir un message MT",
         variant: "destructive",
       })
       return
@@ -298,9 +298,9 @@ BENEFICIARY ADDRESS 2
     <div className="space-y-6">
       {/* En-tête */}
       <div className="space-y-2">
-        <h2 className="text-3xl font-bold tracking-tight">Conversion MT103 → MX</h2>
+        <h2 className="text-3xl font-bold tracking-tight">Conversion MT → MX</h2>
         <p className="text-muted-foreground">
-          Transformez votre message SWIFT MT103 en format MX (ISO 20022) et validez-le contre le schéma XSD
+          Transformez votre message SWIFT MT en format MX (ISO 20022) et validez-le contre le schéma XSD
         </p>
       </div>
 
@@ -319,19 +319,19 @@ BENEFICIARY ADDRESS 2
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <FileText className="h-5 w-5" />
-            Message MT103
-            {/* Bouton Agrandir pour le message MT103 */}
-            <Button variant="outline" size="icon" className="ml-auto" onClick={() => handleEnlargeClick(message, 'Message MT103')}>
+            Message MT
+            {/* Bouton Agrandir pour le message MT */}
+            <Button variant="outline" size="icon" className="ml-auto" onClick={() => handleEnlargeClick(message, 'Message MT')}>
               <Maximize2 className="h-4 w-4" />
             </Button>
           </CardTitle>
-          <CardDescription>Saisissez ou collez votre message SWIFT MT103 ci-dessous pour le convertir</CardDescription>
+          <CardDescription>Saisissez ou collez votre message SWIFT MT ci-dessous pour le convertir</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <Textarea
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            placeholder="Saisissez votre message MT103 ici..."
+            placeholder="Saisissez votre message MT ici..."
             className="min-h-[250px] font-mono text-sm"
           />
           <div className="flex gap-2">

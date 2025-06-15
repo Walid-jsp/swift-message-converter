@@ -14,7 +14,7 @@ export default function Dashboard({ stats, backendStatus, onCheckHealth }) {
       {/* En-tête du Dashboard */}
       <div className="space-y-2">
         <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
-        <p className="text-muted-foreground">Vue d'ensemble de vos conversions SWIFT MT103 vers MX (ISO 20022)</p>
+        <p className="text-muted-foreground">Vue d'ensemble de vos conversions SWIFT MT vers MX (ISO 20022)</p>
       </div>
 
       {/* Alerte statut backend */}
@@ -95,7 +95,7 @@ export default function Dashboard({ stats, backendStatus, onCheckHealth }) {
                 <h4 className="font-medium">Valider MT</h4>
               </div>
               <p className="text-sm text-muted-foreground">
-                Commencez par valider votre message MT103 pour détecter les erreurs de format.
+                Commencez par valider votre message MT pour détecter les erreurs de format.
               </p>
             </div>
             <div className="space-y-2">
@@ -133,7 +133,7 @@ export default function Dashboard({ stats, backendStatus, onCheckHealth }) {
             <div className="space-y-2">
               <h4 className="font-medium">Fonctionnalités principales :</h4>
               <ul className="text-sm text-muted-foreground space-y-1">
-                <li>• Validation des messages MT103 selon les standards SWIFT</li>
+                <li>• Validation des messages MT selon les standards SWIFT</li>
                 <li>• Conversion automatique vers le format MX (ISO 20022)</li>
                 <li>• Validation XSD des messages convertis</li>
                 <li>• Historique complet des transformations</li>

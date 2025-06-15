@@ -31,7 +31,7 @@ const TransformationResult = ({ result, loading }) => {
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-center">
             <div className="w-5 h-5 text-blue-500 mr-3">ℹ️</div>
             <div className="text-blue-700">
-              Aucune transformation n'a encore été effectuée. Veuillez transformer un message MT103.
+              Aucune transformation n'a encore été effectuée. Veuillez transformer un message MT.
             </div>
           </div>
         </div>

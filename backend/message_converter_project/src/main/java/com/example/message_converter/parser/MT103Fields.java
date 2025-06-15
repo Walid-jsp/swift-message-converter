@@ -22,6 +22,7 @@ public class MT103Fields {
     private String orderingCustomerName;
     private String orderingCustomerAddress;
     private String orderingCustomerCountry;
+    private String orderingCustomerCity;
     private String orderingCustomerRaw;
 
     // Tag 52 - Ordering Institution
@@ -39,6 +40,7 @@ public class MT103Fields {
     private String beneficiaryName;
     private String beneficiaryAddress;
     private String beneficiaryCountry;
+    private String beneficiaryCity;
     private String beneficiaryRaw;
 
     private String remittanceInfo; // :70:
@@ -75,13 +77,7 @@ public class MT103Fields {
         this.block3 = block3;
     }
 
-    public String getOrderingCustomerCity() {
-        return orderingCustomerCountry;
-    }
 
-    public void setOrderingCustomerCity(String orderingCustomerCountry) {
-        this.orderingCustomerCountry = orderingCustomerCountry;
-    }
 
     public String getBeneficiaryCountry() {
         return beneficiaryCountry;
@@ -315,6 +311,22 @@ public class MT103Fields {
         this.orderingCustomerCountry = orderingCustomerCountry;
     }
 
+    public void setBeneficiaryCity(String beneficiaryCity) {
+        this.beneficiaryCity = beneficiaryCity;
+    }
+
+    public String getBeneficiaryCity() {
+        return beneficiaryCity;
+    }
+
+    public String getOrderingCustomerCity() {
+        return orderingCustomerCity;
+    }
+
+    public void setOrderingCustomerCity(String orderingCustomerCity) {
+        this.orderingCustomerCity = orderingCustomerCity;
+    }
+
     // Création d'un MT103Fields à partir du parsing complet
     public static MT103Fields fromParsedData(Map<String, String> tagMap, String block1, String block2, String block3) {
         MT103Fields fields = new MT103Fields();
@@ -323,11 +335,12 @@ public class MT103Fields {
         fields.setBlock2(block2);
         fields.setBlock3(block3);
 
-        fields.setReference(tagMap.getOrDefault(":20:", ""));
-        fields.setTypeOperation(tagMap.getOrDefault(":23B:", ""));
+        // Plus de "" par défaut : Java retournera null si la clé n'existe pas.
+        fields.setReference(tagMap.get(":20:"));
+        fields.setTypeOperation(tagMap.get(":23B:"));
 
-        String field32A = tagMap.getOrDefault(":32A:", "");
-        if (!field32A.isEmpty() && field32A.length() >= 9) {
+        String field32A = tagMap.get(":32A:");
+        if (field32A != null && !field32A.isEmpty() && field32A.length() >= 9) {
             fields.setDate(field32A.substring(0, 6));
             fields.setCurrency(field32A.substring(6, 9));
             fields.setAmount(field32A.substring(9));
@@ -340,14 +353,15 @@ public class MT103Fields {
                 fields.setOrderingCustomerRaw(value);
                 if (tag.equals(":50A:")) {
                     // BIC seulement
-                    fields.setOrderingCustomerBic(value);
+                    fields.setOrderingCustomerBic(!value.isEmpty() ? value : null);
                 } else {
-                    // :50F: ou :50K: => /IBAN\nNOM\nADRESSE
+                    // :50F: ou :50K: => /IBAN\nNOM\nADRESSE[\nVILLE][\nPAYS]
                     String[] parts = value.split("\n");
-                    fields.setOrderingCustomerIban(parts.length > 0 ? parts[0].replace("/", "").trim() : "");
-                    fields.setOrderingCustomerName(parts.length > 1 ? parts[1].trim() : "");
-                    fields.setOrderingCustomerAddress(parts.length > 2 ? parts[2].trim() : "");
-                    fields.setOrderingCustomerCity(parts.length>3 ? parts[3].trim() : "");
+                    fields.setOrderingCustomerIban(parts.length > 0 && !parts[0].trim().isEmpty() ? parts[0].replace("/", "").trim() : null);
+                    fields.setOrderingCustomerName(parts.length > 1 && !parts[1].trim().isEmpty() ? parts[1].trim() : null);
+                    fields.setOrderingCustomerAddress(parts.length > 2 && !parts[2].trim().isEmpty() ? parts[2].trim() : null);
+                    fields.setOrderingCustomerCity(parts.length > 3 && !parts[3].trim().isEmpty() ? parts[3].trim() : null);
+                    fields.setOrderingCustomerCountry(parts.length > 4 && !parts[4].trim().isEmpty() ? parts[4].trim() : null);
                 }
                 break; // On ne prend que le premier trouvé
             }
@@ -358,26 +372,26 @@ public class MT103Fields {
             if (tagMap.containsKey(tag)) {
                 String value = tagMap.get(tag).trim();
                 if (tag.equals(":52A:")) {
-                    fields.setOrderingInstitutionBic(value);
+                    fields.setOrderingInstitutionBic(!value.isEmpty() ? value : null);
                 } else {
                     String[] parts = value.split("\n");
-                    fields.setOrderingInstitutionName(parts.length > 0 ? parts[0].trim() : "");
-                    fields.setOrderingInstitutionAddress(parts.length > 1 ? parts[1].trim() : "");
+                    fields.setOrderingInstitutionName(parts.length > 0 && !parts[0].trim().isEmpty() ? parts[0].trim() : null);
+                    fields.setOrderingInstitutionAddress(parts.length > 1 && !parts[1].trim().isEmpty() ? parts[1].trim() : null);
                 }
                 break;
             }
         }
 
-        //57 (Account With Institution)
+        // 57 (Account With Institution)
         for (String tag : Arrays.asList(":57A:", ":57D:")) {
             if (tagMap.containsKey(tag)) {
                 String value = tagMap.get(tag).trim();
                 if (tag.equals(":57A:")) {
-                    fields.setAccountWithInstitutionBic(value);
+                    fields.setAccountWithInstitutionBic(!value.isEmpty() ? value : null);
                 } else {
                     String[] parts = value.split("\n");
-                    fields.setAccountWithInstitutionName(parts.length > 0 ? parts[0].trim() : "");
-                    fields.setAccountWithInstitutionAddress(parts.length > 1 ? parts[1].trim() : "");
+                    fields.setAccountWithInstitutionName(parts.length > 0 && !parts[0].trim().isEmpty() ? parts[0].trim() : null);
+                    fields.setAccountWithInstitutionAddress(parts.length > 1 && !parts[1].trim().isEmpty() ? parts[1].trim() : null);
                 }
                 break;
             }
@@ -388,37 +402,42 @@ public class MT103Fields {
             if (tagMap.containsKey(tag)) {
                 String value = tagMap.get(tag).trim();
                 fields.setBeneficiaryRaw(value);
+                String[] parts = value.split("\n");
                 if (tag.equals(":59A:")) {
                     // :59A: IBAN + nom
-                    String[] parts = value.split("\n");
-                    fields.setBeneficiaryIban(parts.length > 0 ? parts[0].replace("/", "").trim() : "");
-                    fields.setBeneficiaryName(parts.length > 1 ? parts[1].trim() : "");
+                    fields.setBeneficiaryIban(parts.length > 0 && !parts[0].trim().isEmpty() ? parts[0].replace("/", "").trim() : null);
+                    fields.setBeneficiaryName(parts.length > 1 && !parts[1].trim().isEmpty() ? parts[1].trim() : null);
+                    fields.setBeneficiaryAddress(parts.length > 2 && !parts[2].trim().isEmpty() ? parts[2].trim() : null);
+                    fields.setBeneficiaryCity(parts.length > 3 && !parts[3].trim().isEmpty() ? parts[3].trim() : null);
+                    fields.setBeneficiaryCountry(parts.length > 4 && !parts[4].trim().isEmpty() ? parts[4].trim() : null);
                 } else {
                     // :59: — soit /IBAN\nNOM, soit NOM\nADRESSE, etc
-                    String[] parts = value.split("\n");
                     if (parts[0].startsWith("/")) {
-                        fields.setBeneficiaryIban(parts[0].replace("/", "").trim());
-                        fields.setBeneficiaryName(parts.length > 1 ? parts[1].trim() : "");
-                        fields.setBeneficiaryAddress(parts.length > 2 ? parts[2].trim() : "");
+                        fields.setBeneficiaryIban(!parts[0].replace("/", "").trim().isEmpty() ? parts[0].replace("/", "").trim() : null);
+                        fields.setBeneficiaryName(parts.length > 1 && !parts[1].trim().isEmpty() ? parts[1].trim() : null);
+                        fields.setBeneficiaryAddress(parts.length > 2 && !parts[2].trim().isEmpty() ? parts[2].trim() : null);
+                        fields.setBeneficiaryCity(parts.length > 3 && !parts[3].trim().isEmpty() ? parts[3].trim() : null);
+                        fields.setBeneficiaryCountry(parts.length > 4 && !parts[4].trim().isEmpty() ? parts[4].trim() : null);
                     } else {
-                        fields.setBeneficiaryName(parts[0].trim());
-                        fields.setBeneficiaryAddress(parts.length > 1 ? parts[1].trim() : "");
+                        fields.setBeneficiaryName(!parts[0].trim().isEmpty() ? parts[0].trim() : null);
+                        fields.setBeneficiaryAddress(parts.length > 1 && !parts[1].trim().isEmpty() ? parts[1].trim() : null);
+                        fields.setBeneficiaryCity(parts.length > 2 && !parts[2].trim().isEmpty() ? parts[2].trim() : null);
+                        fields.setBeneficiaryCountry(parts.length > 3 && !parts[3].trim().isEmpty() ? parts[3].trim() : null);
                     }
                 }
                 break;
             }
         }
 
-        fields.setRemittanceInfo(tagMap.getOrDefault(":70:", ""));
-        fields.setChargeDetails(tagMap.getOrDefault(":71A:", ""));
-
-        // Champs supplémentaires
-        fields.setIntermediaryBIC(tagMap.getOrDefault(":53B:", ""));
-        fields.setCorrespondentBIC(tagMap.getOrDefault(":54A:", ""));
-        fields.setDetailsOfCharges(tagMap.getOrDefault(":71F:", ""));
-        fields.setExchangeRate(tagMap.getOrDefault(":36:", ""));
-        fields.setInstructionCode(tagMap.getOrDefault(":23E:", ""));
+        fields.setRemittanceInfo(tagMap.get(":70:"));
+        fields.setChargeDetails(tagMap.get(":71A:"));
+        fields.setIntermediaryBIC(tagMap.get(":53B:"));
+        fields.setCorrespondentBIC(tagMap.get(":54A:"));
+        fields.setDetailsOfCharges(tagMap.get(":71F:"));
+        fields.setExchangeRate(tagMap.get(":36:"));
+        fields.setInstructionCode(tagMap.get(":23E:"));
 
         return fields;
     }
+
 }

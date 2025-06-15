@@ -80,7 +80,7 @@ public class MTValidator implements MTValidationservice {
         if (fields.containsKey(":54A:")) validateField54A(fields.get(":54A:"), errors);
 
         // 4. Vérif champs obligatoires liés/cohérence ( si 53B, 54A, ou 57A => 52A obligatoire)
-        checkLinkedFields(fields, errors);
+        //checkLinkedFields(fields, errors);
 
         return errors;
     }
@@ -169,40 +169,64 @@ public class MTValidator implements MTValidationservice {
     // :50A:/K/F (Donneur d'ordre)
     private void validateField50(String value, List<String> errors, String tag) {
         String[] parts = value.split("\n");
-        // IBAN/compte
-        if (parts.length < 1 || parts[0].trim().isEmpty()) {
-            errors.add("Le champ " + tag + " doit contenir un IBAN ou un numéro de compte.");
-        } else {
-            String iban = parts[0].trim();
-            if (iban.startsWith("/")) iban = iban.substring(1);
-            if (!iban.matches("^[A-Z]{2}\\d{2}[A-Za-z0-9]{10,30}$")) {
-                errors.add("Le champ " + tag + " doit contenir un IBAN valide (ex : FR...).");
+        if (":50A:".equals(tag)) {
+            // Seulement BIC
+            String bic = parts[0].trim();
+            if (bic.isEmpty()) {
+                errors.add("Le champ :50A: doit contenir un BIC.");
             } else {
-                // Vérification clé IBAN (modulo 97)
-                if (!checkIBANKey(iban)) {
-                    errors.add("Le champ " + tag + " contient un IBAN dont la clé est invalide (modulo 97).");
+                if (!bic.matches("^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$")) {
+                    errors.add("Le champ :50A: doit contenir un BIC valide (8 ou 11 caractères, lettres/chiffres).");
                 }
-                // Vérif pays IBAN
-                String country = iban.substring(0, 2);
-                if (!isValidCountryCode(country)) {
-                    errors.add("Le champ " + tag + " contient un code pays IBAN non reconnu.");
+                if (bic.length() != 8 && bic.length() != 11) {
+                    errors.add("Le champ :50A: doit avoir exactement 8 ou 11 caractères.");
+                }
+                // Vérification code pays BIC
+                if (bic.length() >= 6 && !isValidCountryCode(bic.substring(4, 6))) {
+                    errors.add("Le champ :50A: contient un code pays BIC non reconnu.");
+                }
+                if (bic.matches(".*[@#€].*")) {
+                    errors.add("Le champ :50A: ne doit pas contenir de caractères spéciaux.");
                 }
             }
-        }
-        // Nom
-        if (parts.length < 2 || parts[1].trim().isEmpty()) {
-            errors.add("Le champ " + tag + " doit contenir un nom de donneur d'ordre après l'IBAN.");
         } else {
-            if (parts[1].matches(".*[0-9@#€].*")) {
-                errors.add("Le nom du donneur d'ordre (" + tag + ") ne doit pas contenir de chiffres ou de caractères spéciaux.");
-            }
-        }
-        // Adresse
-        if (parts.length < 3 || parts[2].trim().isEmpty()) {
-            errors.add("Le champ " + tag + " doit contenir une adresse de donneur d'ordre après le nom.");
-        } else {
-            if (!parts[2].matches(".*\\d+.*")) {
-                errors.add("L'adresse du donneur d'ordre (" + tag + ") doit contenir au moins un chiffre.");
+            // Pour :50K: ou :50F: → IBAN + nom + adresse (au moins 4 lignes : IBAN, nom, adresse, ville, pays)
+            if (parts.length < 5) {
+                errors.add("Le champ " + tag + " doit contenir au moins 5 lignes : IBAN, nom, adresse, ville, pays.");
+            } else {
+                // IBAN
+                String iban = parts[0].trim();
+                if (iban.startsWith("/")) iban = iban.substring(1);
+                if (!iban.matches("^[A-Z]{2}\\d{2}[A-Za-z0-9]{10,30}$")) {
+                    errors.add("Le champ " + tag + " doit contenir un IBAN valide (ex : FR...).");
+                } else {
+                    if (!checkIBANKey(iban)) {
+                        errors.add("Le champ " + tag + " contient un IBAN dont la clé est invalide (modulo 97).");
+                    }
+                    String country = iban.substring(0, 2);
+                    if (!isValidCountryCode(country)) {
+                        errors.add("Le champ " + tag + " contient un code pays IBAN non reconnu.");
+                    }
+                }
+                // Nom
+                if (parts[1].trim().isEmpty()) {
+                    errors.add("Le champ " + tag + " doit contenir un nom de donneur d'ordre après l'IBAN.");
+                }
+                // Adresse
+                if (parts[2].trim().isEmpty()) {
+                    errors.add("Le champ " + tag + " doit contenir une adresse de donneur d'ordre après le nom.");
+                }
+                // Ville
+                if (parts[3].trim().isEmpty()) {
+                    errors.add("Le champ " + tag + " doit contenir une ville de donneur d'ordre après l'adresse.");
+                }
+                // Pays (code pays à 2 lettres)
+                String pays = parts[4].trim();
+                if (!pays.matches("^[A-Z]{2}$")) {
+                    errors.add("Le champ " + tag + " doit contenir un code pays à 2 lettres après la ville.");
+                } else if (!isValidCountryCode(pays)) {
+                    errors.add("Le champ " + tag + " contient un code pays non reconnu.");
+                }
             }
         }
     }
@@ -320,14 +344,14 @@ public class MTValidator implements MTValidationservice {
     }
 
     // Champs liés/cohérence Si 53B, 54A, 57A présents, alors 52A obligatoire
-    private void checkLinkedFields(Map<String, String> fields, List<String> errors) {
+   /* private void checkLinkedFields(Map<String, String> fields, List<String> errors) {
         boolean has53B = fields.containsKey(":53B:");
         boolean has54A = fields.containsKey(":54A:");
         boolean has57A = fields.containsKey(":57A:");
         if ((has53B || has54A || has57A) && !fields.containsKey(":52A:")) {
             errors.add("Si un des champs :53B:, :54A: ou :57A: est présent, le champ :52A: doit aussi être présent.");
         }
-    }
+    }*/
 
     // Vérification IBAN modulo 97 (clé IBAN)
     private boolean checkIBANKey(String iban) {

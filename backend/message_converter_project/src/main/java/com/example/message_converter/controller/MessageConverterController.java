@@ -69,39 +69,19 @@ public class MessageConverterController {
 
 
 
-
     @PostMapping("/transform-mt-to-mx")
     public ResponseEntity<?> transformMTtoMX(@RequestBody String mtMessage) {
-
-
-           PayLoadInOut payLoadIn = new PayLoadInOut();
-            payLoadIn.setPayLoadIn(mtMessage);
-            payLoadIn.setTransformationDate(LocalDateTime.now());
-            payLoadIn.setStatus("IN_PROGRESS");
-            payLoadIn = persistanceService.savePayLoadInOut(payLoadIn);
-
-
-        String mxXml;
         try {
             TransformerService transformer = transformerFactory.getTransformer("MT103_TO_PACS008");
-            mxXml = transformer.transform(mtMessage);
-            payLoadIn.setPayLoadOut(mxXml);
+            String mxXml = transformer.transform(mtMessage);
+            return ResponseEntity.ok(mxXml);
         } catch (Exception e) {
-            payLoadIn.setStatus("ERREUR TECHNIQUE");
-            persistanceService.savePayLoadInOut(payLoadIn);
-            TransformationError err = new TransformationError();
-            err.setErrorType("TRANSFORMATION_ERROR");
-            err.setErrorMessage(e.getMessage());
-            err.setErrorDate(LocalDateTime.now());
-            err.setPayLoadInOut(payLoadIn);
-            persistanceService.saveTransformationError(err);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Erreur lors de la transformation : " + e.getMessage());
         }
-        payLoadIn.setStatus("SUCCESS");
-        persistanceService.savePayLoadInOut(payLoadIn);
-        return ResponseEntity.ok(mxXml);
     }
+
+
 
     @PostMapping("/validate-mx-xsd")
     public ResponseEntity<?> validateMX_XSD(@RequestBody String mxMessage) {
